@@ -215,7 +215,14 @@ while True:
 
             print("Construindo diagramas em caixas")
 
-            stat_analysis.box_plot(sc_values, rs_values)
+            stat_analysis.box_plot("Estados", "Santa Catarina", "Rio Grande do Sul", sc_values, rs_values)
+            print("Estados construídos")
+
+            stat_analysis.box_plot("Postos", "Nacionais", "Outros", nac_values, outr_values)
+            print("Postos construídos")
+
+            stat_analysis.box_plot("Regiões", "Metropolitanas", "Interior", metro_values, int_values)
+            print("Regiões construídos")
 
             print("Concluído.")
         case _:

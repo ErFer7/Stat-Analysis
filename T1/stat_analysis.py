@@ -8,6 +8,7 @@ import csv
 import json
 
 from math import log10, ceil, sqrt
+from os import name
 from statistics import median, mode, variance, stdev
 
 import plotly.graph_objects as go
@@ -409,13 +410,17 @@ def histogram(title: str, color: str, data: list):
     fig.show()
 
 
-def box_plot(data_a: list, data_b: list):
+def box_plot(title: str, title_a: str, title_b: str, data_a: list, data_b: list):
     '''
     Faz o plot de um diagrama de caixas comparativo.
     '''
 
     fig = go.Figure()
-    fig.add_trace(go.Box(y=data_a))
-    fig.add_trace(go.Box(y=data_b))
+    fig.add_trace(go.Box(y=data_a, name=title_a))
+    fig.add_trace(go.Box(y=data_b, name=title_b))
+
+    fig.update_layout(
+        title_text=title,
+    )
 
     fig.show()
