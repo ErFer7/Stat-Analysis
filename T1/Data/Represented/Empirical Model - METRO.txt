@@ -1,0 +1,23 @@
+Classe:Frequência:pi:Pi:Xi:Xi * pi:di^2 * pi
+4,549 ˫ 4,705:1:0,003:0,003:4,627:0,015:0,001
+4,705 ˫ 4,862:0:0,000:0,003:4,784:0,000:0,000
+4,862 ˫ 5,018:11:0,035:0,039:4,940:0,175:0,004
+5,018 ˫ 5,175:51:0,165:0,203:5,096:0,838:0,006
+5,175 ˫ 5,331:145:0,468:0,671:5,253:2,457:0,001
+5,331 ˫ 5,487:62:0,200:0,871:5,409:1,082:0,003
+5,487 ˫ 5,644:30:0,097:0,968:5,566:0,539:0,007
+5,644 ˫ 5,800:9:0,029:0,997:5,722:0,166:0,005
+5,800 ˫ 5,957:0:0,000:0,997:5,878:0,000:0,000
+5,957 ˫ 6,113:1:0,003:1,000:6,035:0,019:0,002
+Total:310:1,000:-:-:5,292:0,030
+
+Média ponderada:5,292:Média simples:5,290
+Mediana:5,287:Mediana NDA:5,287
+Moda:5,253:Moda NDA:5,199
+Variância:0,030:Variância NDA:0,027
+Desvio Padrão:0,173:Desvio Padrão NDA:0,164
+Erro padrão da média:0,010:Erro padrão da média NDA:0,009
+Coeficiente de variação:0,033:Coeficiente de variação NDA:0,031
+Assimetria da mediana:0,089:Assimetria da mediana NDA:0,063
+Assimetria da moda:0,224:Assimetria da moda NDA:0,555
+Erro relativo:0,00032
