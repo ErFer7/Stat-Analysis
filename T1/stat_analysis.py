@@ -8,7 +8,6 @@ import csv
 import json
 
 from math import log10, ceil, sqrt
-from os import name
 from statistics import median, mode, variance, stdev
 
 import plotly.graph_objects as go
