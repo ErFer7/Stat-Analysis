@@ -1,25 +1,19 @@
 # -*- coding: utf-8 -*-
 
 '''
-Trabalho 1 de estatística.
+Ferramentas estatísticas.
 
-Este programa segue um paradigma funcional.
-
-Python 3.10.
+Python 3.10.2
 '''
+
+# TODO: Tornar o funcionamento mais genérico
 
 import os
 import stat_analysis
 
-print("INE5405 - Trabalho 1 de probabilidade e estatística")
+print("INE5405 - Ferramentas estatísticas para a disciplina")
 
-total_values = []
-sc_values = []
-rs_values = []
-nac_values = []
-outr_values = []
-metro_values = []
-int_values = []
+data = {}
 
 while True:
 
@@ -34,12 +28,12 @@ while True:
 
             print("Convertendo de csv para json.")
 
-            stat_analysis.csv2json(os.path.join("Data", "Raw", "T1 - Coleta.csv"),
-                                   os.path.join("Data", "Processed", "T1 - Coleta.json"))
+            stat_analysis.csv2json(os.path.join("Data", "Raw", "Coleta.csv"),
+                                   os.path.join("Data", "Processed", "Coleta.json"))
 
             print("Concluído.")
         case "process_data":
-            stat_analysis.process_data(os.path.join("Data", "Processed", "T1 - Coleta.json"),
+            stat_analysis.process_data(os.path.join("Data", "Processed", "Coleta.json"),
                                        os.path.join("Data", "Processed", "Total.txt"),
                                        os.path.join("Data", "Processed", "SC.txt"),
                                        os.path.join("Data", "Processed", "RS.txt"),
@@ -54,37 +48,37 @@ while True:
             try:
 
                 with open(os.path.join("Data", "Processed", "Total.txt"), 'r', encoding="utf-8") as file:
-                    total_values = list(map(lambda val: float(val.strip()), file.readlines()))
+                    data["Total"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
                 print("Total serizalizado.")
 
                 with open(os.path.join("Data", "Processed", "SC.txt"), 'r', encoding="utf-8") as file:
-                    sc_values = list(map(lambda val: float(val.strip()), file.readlines()))
+                    data["SC"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
                 print("SC serizalizado.")
 
                 with open(os.path.join("Data", "Processed", "RS.txt"), 'r', encoding="utf-8") as file:
-                    rs_values = list(map(lambda val: float(val.strip()), file.readlines()))
+                    data["RS"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
                 print("RS serizalizado.")
 
                 with open(os.path.join("Data", "Processed", "NAC.txt"), 'r', encoding="utf-8") as file:
-                    nac_values = list(map(lambda val: float(val.strip()), file.readlines()))
+                    data["NAC"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
                 print("NAC serizalizado.")
 
                 with open(os.path.join("Data", "Processed", "OUTR.txt"), 'r', encoding="utf-8") as file:
-                    outr_values = list(map(lambda val: float(val.strip()), file.readlines()))
+                    data["OUTR"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
                 print("OUTR serizalizado.")
 
                 with open(os.path.join("Data", "Processed", "METRO.txt"), 'r', encoding="utf-8") as file:
-                    metro_values = list(map(lambda val: float(val.strip()), file.readlines()))
+                    data["METRO"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
                 print("METRO serizalizado.")
 
                 with open(os.path.join("Data", "Processed", "INT.txt"), 'r', encoding="utf-8") as file:
-                    int_values = list(map(lambda val: float(val.strip()), file.readlines()))
+                    data["INT"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
                 print("INT serizalizado.")
             except FileNotFoundError:
@@ -96,27 +90,27 @@ while True:
 
             print("Construindo diagramas de ramos e folhas.")
 
-            stat_analysis.stem_and_leaves(total_values,
-                                          sc_values,
-                                          rs_values,
+            stat_analysis.stem_and_leaves(data["Total"],
+                                          data["SC"],
+                                          data["RS"],
                                           "Santa Catarina",
                                           "Rio Grande do Sul",
                                           os.path.join("Data", "Represented", "Stem and Leaves - State.txt"))
 
             print("Diagrama de estados construído.")
 
-            stat_analysis.stem_and_leaves(total_values,
-                                          nac_values,
-                                          outr_values,
+            stat_analysis.stem_and_leaves(data["Total"],
+                                          data["NAC"],
+                                          data["OUTR"],
                                           "Nacionais",
                                           "Outros",
                                           os.path.join("Data", "Represented", "Stem and Leaves - Gas Station.txt"))
 
             print("Diagrama de postos construído.")
 
-            stat_analysis.stem_and_leaves(total_values,
-                                          metro_values,
-                                          int_values,
+            stat_analysis.stem_and_leaves(data["Total"],
+                                          data["METRO"],
+                                          data["INT"],
                                           "Metropolitanas",
                                           "Interioranas",
                                           os.path.join("Data", "Represented", "Stem and Leaves - Region.txt"))
@@ -128,37 +122,37 @@ while True:
 
             print("Construindo modelos empíricos.")
 
-            stat_analysis.empirical_model(total_values,
+            stat_analysis.empirical_model(data["Total"],
                                           os.path.join("Data", "Represented", "Empirical Model - Total.txt"))
 
             print("Total construído.")
 
-            stat_analysis.empirical_model(sc_values,
+            stat_analysis.empirical_model(data["SC"],
                                           os.path.join("Data", "Represented", "Empirical Model - SC.txt"))
 
             print("SC construído.")
 
-            stat_analysis.empirical_model(rs_values,
+            stat_analysis.empirical_model(data["RS"],
                                           os.path.join("Data", "Represented", "Empirical Model - RS.txt"))
 
             print("RS construído.")
 
-            stat_analysis.empirical_model(nac_values,
+            stat_analysis.empirical_model(data["NAC"],
                                           os.path.join("Data", "Represented", "Empirical Model - NAC.txt"))
 
             print("NAC construído.")
 
-            stat_analysis.empirical_model(outr_values,
+            stat_analysis.empirical_model(data["OUTR"],
                                           os.path.join("Data", "Represented", "Empirical Model - OUTR.txt"))
 
             print("OUTR construído.")
 
-            stat_analysis.empirical_model(metro_values,
+            stat_analysis.empirical_model(data["METRO"],
                                           os.path.join("Data", "Represented", "Empirical Model - METRO.txt"))
 
             print("METRO construído.")
 
-            stat_analysis.empirical_model(int_values,
+            stat_analysis.empirical_model(data["INT"],
                                           os.path.join("Data", "Represented", "Empirical Model - INT.txt"))
 
             print("INT construído.")
@@ -170,43 +164,43 @@ while True:
 
             stat_analysis.histogram("Total",
                                     "#0000CC",
-                                    total_values)
+                                    data["Total"])
 
             print("Total construído.")
 
             stat_analysis.histogram("Santa Catarina",
                                     "#0000CC",
-                                    sc_values)
+                                    data["SC"])
 
             print("SC construído.")
 
             stat_analysis.histogram("Rio Grande do Sul",
                                     "#0000CC",
-                                    rs_values)
+                                    data["RS"])
 
             print("RS construído.")
 
             stat_analysis.histogram("Postos nacionais",
                                     "#0000CC",
-                                    nac_values)
+                                    data["NAC"])
 
             print("NAC construído.")
 
             stat_analysis.histogram("Outros postos",
                                     "#0000CC",
-                                    outr_values)
+                                    data["OUTR"])
 
             print("OUTR construído.")
 
             stat_analysis.histogram("Região metropolitana",
                                     "#0000CC",
-                                    metro_values)
+                                    data["METRO"])
 
             print("METRO construído.")
 
             stat_analysis.histogram("Interior",
                                     "#0000CC",
-                                    int_values)
+                                    data["INT"])
 
             print("INT construído.")
 
@@ -215,14 +209,50 @@ while True:
 
             print("Construindo diagramas em caixas")
 
-            stat_analysis.box_plot("Estados", "Santa Catarina", "Rio Grande do Sul", sc_values, rs_values)
+            stat_analysis.box_plot("Estados", "Santa Catarina", "Rio Grande do Sul", data["SC"], data["RS"])
             print("Estados construídos")
 
-            stat_analysis.box_plot("Postos", "Nacionais", "Outros", nac_values, outr_values)
+            stat_analysis.box_plot("Postos", "Nacionais", "Outros", data["NAC"], data["OUTR"])
             print("Postos construídos")
 
-            stat_analysis.box_plot("Regiões", "Metropolitanas", "Interior", metro_values, int_values)
+            stat_analysis.box_plot("Regiões", "Metropolitanas", "Interior", data["METRO"], data["INT"])
             print("Regiões construídos")
+
+            print("Concluído.")
+        case "proportion" | "prop":
+
+            print("Calculando proporções")
+
+            print("SC")
+            stat_analysis.average_proportion(data["SC"])
+            print("RS")
+            stat_analysis.average_proportion(data["RS"])
+            print("NAC")
+            stat_analysis.average_proportion(data["NAC"])
+            print("OUTR")
+            stat_analysis.average_proportion(data["OUTR"])
+            print("METRO")
+            stat_analysis.average_proportion(data["METRO"])
+            print("INT")
+            stat_analysis.average_proportion(data["INT"])
+
+            print("Concluído.")
+        case "proportion2" | "prop2":
+
+            print("Calculando proporções")
+
+            print("SC")
+            stat_analysis.above_average_proportion(data["SC"])
+            print("RS")
+            stat_analysis.above_average_proportion(data["RS"])
+            print("NAC")
+            stat_analysis.above_average_proportion(data["NAC"])
+            print("OUTR")
+            stat_analysis.above_average_proportion(data["OUTR"])
+            print("METRO")
+            stat_analysis.above_average_proportion(data["METRO"])
+            print("INT")
+            stat_analysis.above_average_proportion(data["INT"])
 
             print("Concluído.")
         case _:

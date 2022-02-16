@@ -344,31 +344,31 @@ def empirical_model(data: list, output_file_path: str):
         str_total = str_total.replace('.', ',')
         file.write(str_total)
 
-        file.write(f"Média ponderada:{weighted_average_sum:.3f}:".replace('.', ',') + \
+        file.write(f"Média ponderada:{weighted_average_sum:.3f}:".replace('.', ',') +
                    f"Média simples:{simple_average:.3f}\n".replace('.', ','))
 
-        file.write(f"Mediana:{median_:.3f}:".replace('.', ',') + \
+        file.write(f"Mediana:{median_:.3f}:".replace('.', ',') +
                    f"Mediana NDA:{median_nda:.3f}\n".replace('.', ','))
 
-        file.write(f"Moda:{mode_:.3f}:".replace('.', ',') + \
+        file.write(f"Moda:{mode_:.3f}:".replace('.', ',') +
                    f"Moda NDA:{mode_nda:.3f}\n".replace('.', ','))
 
-        file.write(f"Variância:{variance_sum:.3f}:".replace('.', ',') + \
+        file.write(f"Variância:{variance_sum:.3f}:".replace('.', ',') +
                    f"Variância NDA:{variance_nda:.3f}\n".replace('.', ','))
 
-        file.write(f"Desvio Padrão:{std_deviation:.3f}:".replace('.', ',') + \
+        file.write(f"Desvio Padrão:{std_deviation:.3f}:".replace('.', ',') +
                    f"Desvio Padrão NDA:{std_deviation_nda:.3f}\n".replace('.', ','))
 
-        file.write(f"Erro padrão da média:{std_avg_error:.3f}:".replace('.', ',') + \
+        file.write(f"Erro padrão da média:{std_avg_error:.3f}:".replace('.', ',') +
                    f"Erro padrão da média NDA:{std_avg_error_nda:.3f}\n".replace('.', ','))
 
-        file.write(f"Coeficiente de variação:{variation_coeff:.3f}:".replace('.', ',') + \
+        file.write(f"Coeficiente de variação:{variation_coeff:.3f}:".replace('.', ',') +
                    f"Coeficiente de variação NDA:{variation_coeff_nda:.3f}\n".replace('.', ','))
 
-        file.write(f"Assimetria da mediana:{median_assimetry:.3f}:".replace('.', ',') + \
+        file.write(f"Assimetria da mediana:{median_assimetry:.3f}:".replace('.', ',') +
                    f"Assimetria da mediana NDA:{median_assimetry_nda:.3f}\n".replace('.', ','))
 
-        file.write(f"Assimetria da moda:{mode_assimetry:.3f}:".replace('.', ',') + \
+        file.write(f"Assimetria da moda:{mode_assimetry:.3f}:".replace('.', ',') +
                    f"Assimetria da moda NDA:{mode_assimetry_nda:.3f}\n".replace('.', ','))
 
         file.write(f"Erro relativo:{relative_error:.5f}\n".replace('.', ','))
@@ -423,3 +423,39 @@ def box_plot(title: str, title_a: str, title_b: str, data_a: list, data_b: list)
     )
 
     fig.show()
+
+
+def average_proportion(data: list):
+    '''
+    Calcula a proporção simples.
+    '''
+
+    simple_average = sum(data) / len(data)
+    std_deviation = stdev(data)
+
+    count = 0
+
+    for value in data:
+
+        if simple_average - std_deviation <= value <= simple_average + std_deviation:
+            count += 1
+
+    print(f"Proporção: {count / len(data):.3f}")
+
+
+def above_average_proportion(data: list):
+    '''
+    Calcula a proporção simples.
+    '''
+
+    simple_average = sum(data) / len(data)
+    std_deviation = stdev(data)
+
+    count = 0
+
+    for value in data:
+
+        if value > simple_average + 2 * std_deviation:
+            count += 1
+
+    print(f"Proporção: {count / len(data):.3f}")
