@@ -8,7 +8,7 @@ import csv
 import json
 
 from math import log10, ceil, sqrt
-from statistics import median, mode, variance, stdev
+from statistics import median, mode, variance, stdev, NormalDist
 
 import plotly.graph_objects as go
 
@@ -459,3 +459,47 @@ def above_average_proportion(data: list):
             count += 1
 
     print(f"Proporção: {count / len(data):.3f}")
+
+
+def empirical_rule_check(data: list, std_deviation: float, average: float, multiplier: float):
+    '''
+    Checa a regra empírica.
+    '''
+
+    simple_average = sum(data) / len(data)
+    simple_std_deviation = stdev(data)
+
+    count = 0
+    probability = 0
+
+    for value in data:
+
+        if average - std_deviation * multiplier <= value <= average + std_deviation * multiplier:
+            count += 1
+            probability += value
+
+    print(f"Proporção empírica M{multiplier}: {((count / len(data)) * 100.0):.2f}%, "
+          f"Probabilidade: {((probability / count) * 100.0):.2f}%")
+
+    count = 0
+    probability = 0
+
+    for value in data:
+
+        if simple_average - simple_std_deviation * multiplier \
+           <= value <=                                        \
+           simple_average + simple_std_deviation * multiplier:
+            count += 1
+            probability += value
+
+    print(f"Proporção simples M{multiplier}: {((count / len(data)) * 100.0):.2f}%, "
+          f"Probabilidade: {((probability / count) * 100.0):.2f}%")
+
+
+def pdfwrapper(mean: float, std_deviation: float, value: float):
+    '''
+    Calcula a densidade de probabilidade.
+    '''
+
+    normal_distribution = NormalDist(mean, std_deviation)
+    print(normal_distribution.pdf(value))

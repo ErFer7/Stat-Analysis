@@ -255,5 +255,22 @@ while True:
             stat_analysis.above_average_proportion(data["INT"])
 
             print("Concluído.")
+        case "empirical_rule" | "emprl":
+            print("Checando a regra empírica")
+
+            print("SC")
+            stat_analysis.empirical_rule_check(data["SC"], 0.171, 5.303, 1)
+            stat_analysis.empirical_rule_check(data["SC"], 0.171, 5.303, 2)
+            stat_analysis.empirical_rule_check(data["SC"], 0.171, 5.303, 3)
+            print("NAC")
+            stat_analysis.empirical_rule_check(data["NAC"], 0.267, 5.364, 1)
+            stat_analysis.empirical_rule_check(data["NAC"], 0.267, 5.364, 2)
+            stat_analysis.empirical_rule_check(data["NAC"], 0.267, 5.364, 3)
+            print("METRO")
+            stat_analysis.empirical_rule_check(data["METRO"], 0.173, 5.292, 1)
+            stat_analysis.empirical_rule_check(data["METRO"], 0.173, 5.292, 2)
+            stat_analysis.empirical_rule_check(data["METRO"], 0.173, 5.292, 3)
+
+            print("Concluído.")
         case _:
             print("Comando não reconhecido.")
