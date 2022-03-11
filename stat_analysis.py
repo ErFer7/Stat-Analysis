@@ -4,6 +4,7 @@
 Análise estatística.
 '''
 
+from audioop import mul
 import csv
 import json
 
@@ -459,6 +460,43 @@ def above_average_proportion(data: list):
             count += 1
 
     print(f"Proporção: {count / len(data):.3f}")
+
+
+def simple_proportion(data: list, std_deviation: float, average: float, multiplier: float):
+    '''
+    Calcula a proporção simples.
+    '''
+
+    simple_average = sum(data) / len(data)
+    simple_std_deviation = stdev(data)
+
+    filtered_data = []
+
+    if multiplier >= 0:
+        filtered_data = list(filter(lambda x: x >= average + std_deviation * multiplier, data))
+    else:
+        filtered_data = list(filter(lambda x: x <= average + std_deviation * multiplier, data))
+
+    count = len(filtered_data)
+    probability = sum(filtered_data)
+
+    print(filtered_data)
+    print(count)
+
+    print(f"Proporção com std_dev = {multiplier}: {((count / len(data)) * 100.0):.2f}%, "
+          f"Probabilidade: {((probability / count)):.2f}%")
+
+    if multiplier >= 0:
+        filtered_data = list(filter(lambda x: x >= simple_average + simple_std_deviation * multiplier, data))
+    else:
+        filtered_data = list(filter(lambda x: x <= simple_average + simple_std_deviation * multiplier, data))
+
+    count = len(filtered_data)
+    probability = sum(filtered_data)
+
+    print(f"Proporção simples com std_dev = {multiplier}: {((count / len(data)) * 100.0):.2f}%, "
+          f"Probabilidade simples: {((probability / count)):.2f}%")
+
 
 
 def empirical_rule_check(data: list, std_deviation: float, average: float, multiplier: float):

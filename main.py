@@ -272,5 +272,13 @@ while True:
             stat_analysis.empirical_rule_check(data["METRO"], 0.173, 5.292, 3)
 
             print("Concluído.")
+        case "extreme_prices" | "xp":
+            print("Calculando as proporções extremas")
+
+            print("Total")
+            stat_analysis.simple_proportion(data["Total"], 0.209, 5.35, -2.5)
+            stat_analysis.simple_proportion(data["Total"], 0.209, 5.35, 2.5)
+
+            print("Concluído.")
         case _:
             print("Comando não reconhecido.")
