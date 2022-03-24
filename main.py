@@ -8,7 +8,7 @@ Python 3.10.2
 
 from os.path import join
 
-from stat_analysis import DataProcessing, StemAndLeavesDiagram, EmpiricalModel, Ploting, Probability
+from stat_analysis import DataProcessing, StemAndLeavesDiagram, EmpiricalModel, Ploting
 
 print("INE5405 - Ferramentas de estatísica e probabilidade")
 
@@ -17,9 +17,9 @@ empirical_models = {}
 
 while True:
 
-    command = input(">>> ").split()
+    command = input(">>> ")
 
-    match command[0]:
+    match command:
         case "quit" | 'q':
 
             print("Saindo.")
@@ -186,65 +186,53 @@ while True:
             print("Regiões construídos")
 
             print("Concluído.")
-        case "proportion" | "prop":
+        case "proportion" | "pr":
 
             print("Calculando proporções")
 
-            print("SC")
-            Probability.average_proportion(data["SC"])
-            print("RS")
-            Probability.average_proportion(data["RS"])
-            print("NAC")
-            Probability.average_proportion(data["NAC"])
-            print("OUTR")
-            Probability.average_proportion(data["OUTR"])
-            print("METRO")
-            Probability.average_proportion(data["METRO"])
-            print("INT")
-            Probability.average_proportion(data["INT"])
+            for empirical_model_key, empirical_model in empirical_models.items():
+
+                print(empirical_model_key)
+                empirical_model.nda_around_average_relative_proportion(1.0, True)
+                print()
 
             print("Concluído.")
-        case "proportion2" | "prop2":
+        case "proportion_2x_above" | "pr2xup":
 
             print("Calculando proporções")
 
-            print("SC")
-            Probability.above_average_proportion(data["SC"])
-            print("RS")
-            Probability.above_average_proportion(data["RS"])
-            print("NAC")
-            Probability.above_average_proportion(data["NAC"])
-            print("OUTR")
-            Probability.above_average_proportion(data["OUTR"])
-            print("METRO")
-            Probability.above_average_proportion(data["METRO"])
-            print("INT")
-            Probability.above_average_proportion(data["INT"])
+            for empirical_model_key, empirical_model in empirical_models.items():
+
+                print(empirical_model_key)
+                empirical_model.nda_average_relative_proportion(2.0, False)
+                print()
 
             print("Concluído.")
         case "empirical_rule" | "emprl":
             print("Checando a regra empírica")
 
-            print("SC")
-            Probability.empirical_rule_check(data["SC"], 0.171, 5.303, 1)
-            Probability.empirical_rule_check(data["SC"], 0.171, 5.303, 2)
-            Probability.empirical_rule_check(data["SC"], 0.171, 5.303, 3)
-            print("NAC")
-            Probability.empirical_rule_check(data["NAC"], 0.267, 5.364, 1)
-            Probability.empirical_rule_check(data["NAC"], 0.267, 5.364, 2)
-            Probability.empirical_rule_check(data["NAC"], 0.267, 5.364, 3)
-            print("METRO")
-            Probability.empirical_rule_check(data["METRO"], 0.173, 5.292, 1)
-            Probability.empirical_rule_check(data["METRO"], 0.173, 5.292, 2)
-            Probability.empirical_rule_check(data["METRO"], 0.173, 5.292, 3)
+            for empirical_model_key, empirical_model in empirical_models.items():
+
+                print(empirical_model_key)
+
+                for i in range(1, 4):
+                    empirical_model.around_average_relative_proportion(i, True)
+                    print()
+
+                for i in range(1, 4):
+                    empirical_model.nda_around_average_relative_proportion(i, True)
+                    print()
 
             print("Concluído.")
         case "extreme_prices" | "xp":
             print("Calculando as proporções extremas")
 
-            print("Total")
-            Probability.simple_proportion(data["Total"], 0.209, 5.35, -2.5)
-            Probability.simple_proportion(data["Total"], 0.209, 5.35, 2.5)
+            for empirical_model_key, empirical_model in empirical_models.items():
+
+                print(empirical_model_key)
+                empirical_model.average_relative_proportion(-2.5, False)
+                empirical_model.average_relative_proportion(2.5, False)
+                print()
 
             print("Concluído.")
         case _:

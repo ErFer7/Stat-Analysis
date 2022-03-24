@@ -9,7 +9,7 @@ import json
 
 from os.path import join
 from math import log10, ceil, sqrt
-from statistics import median, mode, variance, stdev, NormalDist
+from statistics import median, mode, variance, stdev
 
 import plotly.graph_objects as go
 
@@ -473,6 +473,129 @@ class EmpiricalModel():
 
         fig.show()
 
+    def average_relative_proportion(self, multiplier: float, inclusive: bool) -> float:
+        '''
+        Proporção em relação à média usando o desvio padrão.
+
+        multiplier (float): Coeficiente do desvio padrão em relação à média, valores positivos correspondem à
+        proporção acima da média, valores negativos correspondem à proporção abaixo da média.
+        '''
+
+        filtered_data = []
+
+        if inclusive:
+
+            if multiplier >= 0:
+                filtered_data = list(filter(lambda x: self.weighted_average_sum <= x
+                                            <= self.weighted_average_sum + self.std_deviation * multiplier,
+                                            self.data))
+            else:
+                filtered_data = list(filter(lambda x: self.weighted_average_sum + self.std_deviation * multiplier <= x
+                                            <= self.weighted_average_sum,
+                                            self.data))
+        else:
+
+            if multiplier >= 0:
+                filtered_data = list(filter(lambda x: x >= self.weighted_average_sum + self.std_deviation * multiplier,
+                                            self.data))
+            else:
+                filtered_data = list(filter(lambda x: x <= self.weighted_average_sum + self.std_deviation * multiplier,
+                                            self.data))
+
+        count = len(filtered_data)
+        proportion = count / len(self.data)
+
+        print(f"Proporção com {multiplier} std_dev: {(proportion * 100.0):.2f}% "
+              f"({proportion:.4f})")
+
+        return proportion
+
+    def around_average_relative_proportion(self, multiplier: float, inclusive: bool) -> float:
+        '''
+        Proporção em relação à média usando o desvio padrão.
+
+        multiplier (float): Coeficiente do desvio padrão em relação à média, tanto acima como abaixo.
+        '''
+
+        proportion = self.average_relative_proportion(-multiplier, inclusive) + \
+            self.average_relative_proportion(multiplier, inclusive)
+
+        print(f"Proporção em torno da média com {multiplier} std_dev: {(proportion * 100.0):.2f}% "
+              f"({proportion:.4f})")
+
+        return proportion
+
+    def nda_average_relative_proportion(self, multiplier: float, inclusive: bool) -> float:
+        '''
+        Proporção em relação à média simples usado o desvio padrão simples.
+
+        multiplier (float): Coeficiente do desvio padrão em relação à média, valores positivos correspondem à
+        proporção acima da média, valores negativos correspondem à proporção abaixo da média.
+        '''
+
+        if inclusive:
+
+            if multiplier >= 0:
+                filtered_data = list(filter(lambda x: self.simple_average <= x
+                                            <= self.simple_average + self.std_deviation_nda * multiplier,
+                                            self.data))
+            else:
+                filtered_data = list(filter(lambda x: self.simple_average + self.std_deviation_nda * multiplier <= x
+                                            <= self.simple_average,
+                                            self.data))
+        else:
+
+            if multiplier >= 0:
+                filtered_data = list(filter(lambda x: x >= self.simple_average + self.std_deviation_nda * multiplier,
+                                            self.data))
+            else:
+                filtered_data = list(filter(lambda x: x <= self.simple_average + self.std_deviation_nda * multiplier,
+                                            self.data))
+
+        count = len(filtered_data)
+        proportion = count / len(self.data)
+
+        print(f"Proporção nda com {multiplier} std_dev: {(proportion * 100.0):.2f}% "
+              f"({proportion:.4f})")
+
+        return proportion
+
+    def nda_around_average_relative_proportion(self, multiplier: float, inclusive: bool) -> float:
+        '''
+        Proporção em relação à média simples usando o desvio padrão simples.
+
+        multiplier (float): Coeficiente do desvio padrão em relação à média, tanto acima como abaixo.
+        '''
+
+        proportion = self.nda_average_relative_proportion(-multiplier, inclusive) + \
+            self.nda_average_relative_proportion(multiplier, inclusive)
+
+        print(f"Proporção nda em torno da média com {multiplier} std_dev: {(proportion * 100.0):.2f}% "
+              f"({proportion:.4f})")
+
+        return proportion
+
+    def chi_squared_test(self):
+        '''
+        Teste do Qui-quadrado.
+        '''
+
+        raise NotImplementedError
+
+    def f_snedecor(self):
+        '''
+        Distribuição de Fisher-Snedecor.
+        '''
+
+        raise NotImplementedError
+
+    def t_student(self):
+        '''
+        Distribuição de t-Student.
+        '''
+
+        raise NotImplementedError
+
 
 class Ploting():
 
@@ -501,127 +624,3 @@ class Ploting():
         )
 
         fig.show()
-
-
-class Probability():
-
-    '''
-    Wrapper para os métodos de cálculo probabilístico.
-    '''
-
-    @staticmethod
-    def average_proportion(data: list):
-        '''
-        Calcula a proporção simples.
-        '''
-
-        simple_average = sum(data) / len(data)
-        std_deviation = stdev(data)
-
-        count = 0
-
-        for value in data:
-
-            if simple_average - std_deviation <= value <= simple_average + std_deviation:
-                count += 1
-
-        print(f"Proporção: {count / len(data):.3f}")
-
-
-    @staticmethod
-    def above_average_proportion(data: list):
-        '''
-        Calcula a proporção simples.
-        '''
-
-        simple_average = sum(data) / len(data)
-        std_deviation = stdev(data)
-
-        count = 0
-
-        for value in data:
-
-            if value > simple_average + 2 * std_deviation:
-                count += 1
-
-        print(f"Proporção: {count / len(data):.3f}")
-
-    @staticmethod
-    def simple_proportion(data: list, std_deviation: float, average: float, multiplier: float):
-        '''
-        Calcula a proporção simples.
-        '''
-
-        simple_average = sum(data) / len(data)
-        simple_std_deviation = stdev(data)
-
-        filtered_data = []
-
-        if multiplier >= 0:
-            filtered_data = list(filter(lambda x: x >= average + std_deviation * multiplier, data))
-        else:
-            filtered_data = list(filter(lambda x: x <= average + std_deviation * multiplier, data))
-
-        count = len(filtered_data)
-        probability = sum(filtered_data)
-
-        print(filtered_data)
-        print(count)
-
-        print(f"Proporção com std_dev = {multiplier}: {((count / len(data)) * 100.0):.2f}%, "
-            f"Probabilidade: {((probability / count)):.2f}%")
-
-        if multiplier >= 0:
-            filtered_data = list(filter(lambda x: x >= simple_average + simple_std_deviation * multiplier, data))
-        else:
-            filtered_data = list(filter(lambda x: x <= simple_average + simple_std_deviation * multiplier, data))
-
-        count = len(filtered_data)
-        probability = sum(filtered_data)
-
-        print(f"Proporção simples com std_dev = {multiplier}: {((count / len(data)) * 100.0):.2f}%, "
-            f"Probabilidade simples: {((probability / count)):.2f}%")
-
-    @staticmethod
-    def empirical_rule_check(data: list, std_deviation: float, average: float, multiplier: float):
-        '''
-        Checa a regra empírica.
-        '''
-
-        simple_average = sum(data) / len(data)
-        simple_std_deviation = stdev(data)
-
-        count = 0
-        probability = 0
-
-        for value in data:
-
-            if average - std_deviation * multiplier <= value <= average + std_deviation * multiplier:
-                count += 1
-                probability += value
-
-        print(f"Proporção empírica M{multiplier}: {((count / len(data)) * 100.0):.2f}%, "
-            f"Probabilidade: {((probability / count) * 100.0):.2f}%")
-
-        count = 0
-        probability = 0
-
-        for value in data:
-
-            if simple_average - simple_std_deviation * multiplier \
-            <= value <=                                        \
-            simple_average + simple_std_deviation * multiplier:
-                count += 1
-                probability += value
-
-        print(f"Proporção simples M{multiplier}: {((count / len(data)) * 100.0):.2f}%, "
-            f"Probabilidade: {((probability / count) * 100.0):.2f}%")
-
-    @staticmethod
-    def pdfwrapper(mean: float, std_deviation: float, value: float):
-        '''
-        Calcula a densidade de probabilidade.
-        '''
-
-        normal_distribution = NormalDist(mean, std_deviation)
-        print(normal_distribution.pdf(value))
