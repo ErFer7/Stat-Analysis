@@ -41,6 +41,21 @@ while True:
                                         (1, 3, 5),
                                         4)
 
+            DataProcessing.process_data(join("Data", "Processed", "Coleta.json"),
+                                        join("Data", "Processed"),
+                                        (3, 5),
+                                        4,
+                                        False,
+                                        ("SC", 1))
+
+            DataProcessing.process_data(join("Data", "Processed", "Coleta.json"),
+                                        join("Data", "Processed"),
+                                        (3, 5),
+                                        4,
+                                        False,
+                                        ("RS", 1))
+
+
             print("Concluído.")
         case "serialize_comp" | "sc":
 
@@ -51,37 +66,44 @@ while True:
                 with open(join("Data", "Processed", "Total.txt"), 'r', encoding="utf-8") as file:
                     data["Total"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
-                print("Total serizalizado.")
-
                 with open(join("Data", "Processed", "SC.txt"), 'r', encoding="utf-8") as file:
                     data["SC"] = list(map(lambda val: float(val.strip()), file.readlines()))
-
-                print("SC serizalizado.")
 
                 with open(join("Data", "Processed", "RS.txt"), 'r', encoding="utf-8") as file:
                     data["RS"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
-                print("RS serizalizado.")
-
                 with open(join("Data", "Processed", "NAC.txt"), 'r', encoding="utf-8") as file:
                     data["NAC"] = list(map(lambda val: float(val.strip()), file.readlines()))
-
-                print("NAC serizalizado.")
 
                 with open(join("Data", "Processed", "OUTR.txt"), 'r', encoding="utf-8") as file:
                     data["OUTR"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
-                print("OUTR serizalizado.")
-
                 with open(join("Data", "Processed", "METRO.txt"), 'r', encoding="utf-8") as file:
                     data["METRO"] = list(map(lambda val: float(val.strip()), file.readlines()))
-
-                print("METRO serizalizado.")
 
                 with open(join("Data", "Processed", "INT.txt"), 'r', encoding="utf-8") as file:
                     data["INT"] = list(map(lambda val: float(val.strip()), file.readlines()))
 
-                print("INT serizalizado.")
+                with open(join("Data", "Processed", "SC - NAC.txt"), 'r', encoding="utf-8") as file:
+                    data["SC - NAC"] = list(map(lambda val: float(val.strip()), file.readlines()))
+
+                with open(join("Data", "Processed", "SC - OUTR.txt"), 'r', encoding="utf-8") as file:
+                    data["SC - OUTR"] = list(map(lambda val: float(val.strip()), file.readlines()))
+
+                with open(join("Data", "Processed", "SC - METRO.txt"), 'r', encoding="utf-8") as file:
+                    data["SC - METRO"] = list(map(lambda val: float(val.strip()), file.readlines()))
+
+                with open(join("Data", "Processed", "RS - NAC.txt"), 'r', encoding="utf-8") as file:
+                    data["RS - NAC"] = list(map(lambda val: float(val.strip()), file.readlines()))
+
+                with open(join("Data", "Processed", "RS - OUTR.txt"), 'r', encoding="utf-8") as file:
+                    data["RS - OUTR"] = list(map(lambda val: float(val.strip()), file.readlines()))
+
+                with open(join("Data", "Processed", "RS - METRO.txt"), 'r', encoding="utf-8") as file:
+                    data["RS - METRO"] = list(map(lambda val: float(val.strip()), file.readlines()))
+
+                with open(join("Data", "Processed", "RS - INT.txt"), 'r', encoding="utf-8") as file:
+                    data["RS - INT"] = list(map(lambda val: float(val.strip()), file.readlines()))
             except FileNotFoundError:
 
                 print("Os arquivos não existem, lembre-se de processar os dados!")
@@ -176,14 +198,40 @@ while True:
 
             print("Construindo diagramas em caixas")
 
-            Ploting.box_plot("Estados", "Santa Catarina", "Rio Grande do Sul", data["SC"], data["RS"])
+            Ploting.double_box_plot("Estados",
+                                    "Santa Catarina",
+                                    "Rio Grande do Sul",
+                                    data["SC"],
+                                    data["RS"])
+
             print("Estados construídos")
 
-            Ploting.box_plot("Postos", "Nacionais", "Outros", data["NAC"], data["OUTR"])
-            print("Postos construídos")
+            Ploting.double_box_plot("Postos em Santa Catarina",
+                                    "Nacionais",
+                                    "Outros",
+                                    data["SC - NAC"],
+                                    data["SC - OUTR"])
 
-            Ploting.box_plot("Regiões", "Metropolitanas", "Interior", data["METRO"], data["INT"])
-            print("Regiões construídos")
+            print("SC: Postos construídos")
+
+            Ploting.double_box_plot("Postos no Rio Grande do Sul",
+                                    "Nacionais",
+                                    "Outros",
+                                    data["RS - NAC"],
+                                    data["RS - OUTR"])
+
+            print("RS: Postos construídos")
+
+            Ploting.box_plot("Região metropolitana em Santa Catarina", data["SC - METRO"])
+            print("SC: Regiões construídas")
+
+            Ploting.double_box_plot("Regiões no Rio Grande do Sul",
+                                    "Metropolitanas",
+                                    "Interior",
+                                    data["RS - METRO"],
+                                    data["RS - INT"])
+
+            print("RS: Regiões construídas")
 
             print("Concluído.")
         case "proportion" | "pr":
@@ -232,6 +280,16 @@ while True:
                 print(empirical_model_key)
                 empirical_model.average_relative_proportion(-2.5, False)
                 empirical_model.average_relative_proportion(2.5, False)
+                print()
+
+            print("Concluído.")
+        case "qui_squared_test" | "qst":
+            print("Aplicando o teste do Qui-quadrado")
+
+            for empirical_model_key, empirical_model in empirical_models.items():
+
+                print(empirical_model_key)
+                empirical_model.chi_squared_test()
                 print()
 
             print("Concluído.")

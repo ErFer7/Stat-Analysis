@@ -4,12 +4,15 @@
 Análise estatística.
 '''
 
+from cmath import inf
 import csv
 import json
 
 from os.path import join
-from math import log10, ceil, sqrt
+from math import log10, ceil, sqrt, exp, pi
 from statistics import median, mode, variance, stdev
+
+from scipy import integrate
 
 import plotly.graph_objects as go
 
@@ -48,7 +51,8 @@ class DataProcessing():
                      output_files_path: str,
                      selected_categories: tuple,
                      value_index: int,
-                     total: bool = True) -> None:
+                     total: bool = True,
+                     filter_: tuple = None) -> None:
         '''
         Processa todos os dados e gera arquivos com os dados agrupados.
 
@@ -72,23 +76,37 @@ class DataProcessing():
         if total:
             output_data["Total"] = []
 
-        for key in data:
+        for data_value in data.values():
 
-            value = float(data[key][value_index].replace(',', '.'))
+            value = float(data_value[value_index].replace(',', '.'))
 
             if total:
                 output_data["Total"].append(value)
 
-            for category in selected_categories:
+            if filter_ is None:
 
-                if data[key][category] not in output_data:
-                    output_data[data[key][category]] = []
+                for category in selected_categories:
 
-                output_data[data[key][category]].append(value)
+                    if data_value[category] not in output_data:
+                        output_data[data_value[category]] = []
+
+                    output_data[data_value[category]].append(value)
+            else:
+
+                if data_value[filter_[1]] == filter_[0]:
+
+                    for category in selected_categories:
+
+                        if data_value[category] not in output_data:
+                            output_data[data_value[category]] = []
+
+                        output_data[data_value[category]].append(value)
 
         for category_key, category_values in output_data.items():
 
-            with open(join(output_files_path, f"{category_key}.txt"), 'w+', encoding="utf-8") as file:
+            file_name = f"{category_key}.txt" if filter_ is None else f"{filter_[0]} - {category_key}.txt"
+
+            with open(join(output_files_path, file_name), 'w+', encoding="utf-8") as file:
 
                 for value in category_values:
                     file.write(str(value) + '\n')
@@ -580,7 +598,25 @@ class EmpiricalModel():
         Teste do Qui-quadrado.
         '''
 
-        raise NotImplementedError
+        z_value = 0.0
+        z_sum = 0.0
+
+        print("Oi  :  zi   -  zs   :   z    :   Ei   :  (Oi - Ei)^2 / Ei")
+        for i, class_ in enumerate(self.classes):
+
+            z_inf = round((class_[0] - self.weighted_average_sum) / self.std_deviation, 2)
+            z_sup = round((class_[1] - self.weighted_average_sum) / self.std_deviation, 2)
+
+            z_value = MathMethods.z_score(z_sup) - z_sum if i < len(self.classes) - 1 \
+                else 1.0 - MathMethods.z_score(z_inf)
+
+            z_sum += z_value
+
+            exp_value = sum(self.frequency) * z_value
+
+            print(f"{self.frequency[i]:03} : {z_inf: 1.2f} - {z_sup: 1.2f} :"
+                  f" {z_value:.4f} : {exp_value:06.3f} :"
+                  f" {((self.frequency[i] - exp_value) ** 2 / exp_value):.3f}")
 
     def f_snedecor(self):
         '''
@@ -602,9 +638,26 @@ class Ploting():
     '''
     Wrapper para os métodos de plotagem.
     '''
+    @staticmethod
+    def box_plot(title: str, data: list) -> None:
+        '''
+        Faz o plot de um diagrama de caixas comparativo.
+
+        title (str): Título do boxplot.
+        data (list): Dados.
+        '''
+
+        fig = go.Figure()
+        fig.add_trace(go.Box(y=data))
+
+        fig.update_layout(
+            title_text=title,
+        )
+
+        fig.show()
 
     @staticmethod
-    def box_plot(title: str, title_a: str, title_b: str, data_a: list, data_b: list) -> None:
+    def double_box_plot(title: str, title_a: str, title_b: str, data_a: list, data_b: list) -> None:
         '''
         Faz o plot de um diagrama de caixas comparativo.
 
@@ -624,3 +677,18 @@ class Ploting():
         )
 
         fig.show()
+
+
+class MathMethods():
+
+    '''
+    Wrapper para métodos matemáticos.
+    '''
+
+    @staticmethod
+    def z_score(z_value: float):
+        '''
+        Calcula o z score.
+        '''
+
+        return integrate.quad(lambda z: (1.0 / sqrt(2.0 * pi)) * exp(-(z ** 2.0 / 2.0)), -inf, z_value)[0]
