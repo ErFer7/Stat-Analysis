@@ -17,6 +17,21 @@ from scipy import integrate
 import plotly.graph_objects as go
 
 
+class MathMethods():
+
+    '''
+    Wrapper para métodos matemáticos.
+    '''
+
+    @staticmethod
+    def z_score(z_value: float):
+        '''
+        Calcula o z score.
+        '''
+
+        return integrate.quad(lambda z: (1.0 / sqrt(2.0 * pi)) * exp(-(z ** 2.0 / 2.0)), -inf, z_value)[0]
+
+
 class DataProcessing():
 
     '''
@@ -593,15 +608,25 @@ class EmpiricalModel():
 
         return proportion
 
-    def chi_squared_test(self):
+    def chi_squared_test(self, output_file_path: str):
         '''
         Teste do Qui-quadrado.
         '''
 
+        expected_values = []
+        valid_classes_index = list(range(len(self.classes)))
+
         z_value = 0.0
         z_sum = 0.0
 
-        print("Oi  :  zi   -  zs   :   z    :   Ei   :  (Oi - Ei)^2 / Ei")
+        inf_class = 0.0
+        sup_class = 0.0
+        inf_freq = 0.0
+        sup_freq = 0.0
+        inf_exp_value = 0.0
+        sup_exp_value = 0.0
+
+        # Calcula os valores esperados
         for i, class_ in enumerate(self.classes):
 
             z_inf = round((class_[0] - self.weighted_average_sum) / self.std_deviation, 2)
@@ -613,10 +638,83 @@ class EmpiricalModel():
             z_sum += z_value
 
             exp_value = sum(self.frequency) * z_value
+            expected_values.append(exp_value)
 
-            print(f"{self.frequency[i]:03} : {z_inf: 1.2f} - {z_sup: 1.2f} :"
-                  f" {z_value:.4f} : {exp_value:06.3f} :"
-                  f" {((self.frequency[i] - exp_value) ** 2 / exp_value):.3f}")
+        inf_exp_value = 0.0
+        inf_freq = 0
+        inf_class = 0.0
+        index = 0
+
+        # Colapsa os valores do limite inferior
+        while True:
+
+            inf_exp_value += expected_values[index]
+            inf_freq += self.frequency[index]
+            inf_class = self.classes[index][1]
+
+            if inf_exp_value <= 5:
+                valid_classes_index.remove(index)
+                index += 1
+            else:
+
+                if index > 0:
+                    valid_classes_index.remove(index)
+                break
+
+        sup_exp_value = 0.0
+        sup_freq = 0
+        sup_class = 0.0
+        index = len(self.classes) - 1
+
+        # Colapsa os valores do limite superior
+        while True:
+
+            sup_exp_value += expected_values[index]
+            sup_freq += self.frequency[index]
+            sup_class = self.classes[index][0]
+
+            if sup_exp_value <= 5:
+                valid_classes_index.remove(index)
+                index -= 1
+            else:
+
+                if index < len(self.classes) - 1:
+                    valid_classes_index.remove(index)
+                break
+
+        with open(output_file_path, 'w+', encoding="utf-8") as file:
+
+            chi_squared_sum = 0.0
+
+            file.write("Classes:Oi:Ei:(Oi - Ei)^2/Ei\n")
+
+            if 0 not in valid_classes_index:
+
+                chi_squared = (inf_freq - inf_exp_value) ** 2.0 / inf_exp_value
+                chi_squared_sum += chi_squared
+
+                file.write(f"Menos de {inf_class:.3f}:{inf_freq}:{inf_exp_value:.3f}".replace('.', ',') +
+                           f":{chi_squared:.3f}\n".replace('.', ','))
+
+            for i in valid_classes_index:
+
+                chi_squared = (self.frequency[i] - expected_values[i]) ** 2.0 / expected_values[i]
+                chi_squared_sum += chi_squared
+
+                file.write(f"{self.classes[i][0]:.3f} ˫ {self.classes[i][1]:.3f}:".replace('.', ',') +
+                           f"{self.frequency[i]}:{expected_values[i]:.3f}:".replace('.', ',') +
+                           f"{chi_squared:.3f}\n".replace('.', ','))
+
+            if len(self.classes) - 1 not in valid_classes_index:
+
+                chi_squared = (sup_freq - sup_exp_value) ** 2.0 / sup_exp_value
+                chi_squared_sum += chi_squared
+
+                file.write(f"Mínimo de {sup_class:.3f}:{sup_freq}:{sup_exp_value:.3f}".replace('.', ',') +
+                           f":{chi_squared:.3f}\n".replace('.', ','))
+
+            file.write(f"Total:{sum(self.frequency)}:{round(sum(expected_values))}".replace('.', ',') +
+                           f":{chi_squared_sum:.3f}\n".replace('.', ','))
 
     def f_snedecor(self):
         '''
@@ -677,18 +775,3 @@ class Ploting():
         )
 
         fig.show()
-
-
-class MathMethods():
-
-    '''
-    Wrapper para métodos matemáticos.
-    '''
-
-    @staticmethod
-    def z_score(z_value: float):
-        '''
-        Calcula o z score.
-        '''
-
-        return integrate.quad(lambda z: (1.0 / sqrt(2.0 * pi)) * exp(-(z ** 2.0 / 2.0)), -inf, z_value)[0]

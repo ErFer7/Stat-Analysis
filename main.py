@@ -55,7 +55,6 @@ while True:
                                         False,
                                         ("RS", 1))
 
-
             print("Concluído.")
         case "serialize_comp" | "sc":
 
@@ -288,9 +287,9 @@ while True:
 
             for empirical_model_key, empirical_model in empirical_models.items():
 
-                print(empirical_model_key)
-                empirical_model.chi_squared_test()
-                print()
+                empirical_model.chi_squared_test(join("Data",
+                                                      "Represented",
+                                                      "Chi Squared Test - " + empirical_model_key))
 
             print("Concluído.")
         case _:
