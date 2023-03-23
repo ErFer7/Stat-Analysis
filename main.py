@@ -8,7 +8,7 @@ Python 3.10.2
 
 from os.path import join
 
-from stat_analysis import DataProcessing, StemAndLeavesDiagram, EmpiricalModel, Ploting
+from source.stat_analysis import DataProcessing, StemAndLeavesDiagram, EmpiricalModel, Ploting
 
 print("INE5405 - Ferramentas de estatísica e probabilidade")
 

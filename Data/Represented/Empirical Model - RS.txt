@@ -13,11 +13,11 @@ Total:271:1,000:-:-:5,375:0,051
 
 Média ponderada:5,375:Média simples:5,374
 Mediana:5,349:Mediana NDA:5,349
-Moda:5,215:Moda NDA:5,499
+Moda:5,215:Moda NDA:5,199
 Variância:0,051:Variância NDA:0,047
 Desvio Padrão:0,225:Desvio Padrão NDA:0,217
 Erro padrão da média:0,014:Erro padrão da média NDA:0,013
 Coeficiente de variação:0,042:Coeficiente de variação NDA:0,040
 Assimetria da mediana:0,351:Assimetria da mediana NDA:0,339
-Assimetria da moda:0,712:Assimetria da moda NDA:-0,577
+Assimetria da moda:0,712:Assimetria da moda NDA:0,803
 Erro relativo:0,00034
